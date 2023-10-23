@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodie/screens/bottom_navigation_screen.dart';
 import 'package:foodie/screens/categories_screen.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: CategoriesScreen(),
+      home: BottomNavigationScreen(),
     );
   }
 }

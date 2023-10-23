@@ -25,6 +25,7 @@ class Meal {
   final bool isLactoseFree;
   final bool isVegan;
   final bool isVegetarian;
+  bool isFavorite;
 
   Meal({
     required this.categories,
@@ -39,5 +40,6 @@ class Meal {
     required this.isLactoseFree,
     required this.isVegan,
     required this.isVegetarian,
-  }) : id = uuidV4.generate();
+  })  : id = uuidV4.generate(),
+        isFavorite = false;
 }

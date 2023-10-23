@@ -18,25 +18,17 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Foodie",
-        ),
+    return GridView(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
       ),
-      body: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        padding: const EdgeInsets.all(8),
-        children: [
-          for (final category in foodCategories)
-            CategoryCard(category: category)
-        ],
-      ),
+      padding: const EdgeInsets.all(8),
+      children: [
+        for (final category in foodCategories) CategoryCard(category: category)
+      ],
     );
   }
 }

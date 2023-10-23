@@ -2,22 +2,34 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:foodie/model/meal.dart';
+import 'package:foodie/screens/meal_detail_screen.dart';
+import 'package:foodie/test-data/meals_test_data.dart';
 import 'package:foodie/widgets/meal_card_metadata.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class MealCard extends StatelessWidget {
-  const MealCard({super.key, required this.meal});
+class MealCard extends StatefulWidget {
+  const MealCard({
+    super.key,
+    required this.meal,
+    this.shouldPreventNavigation = false,
+  });
 
   final Meal meal;
+  final bool shouldPreventNavigation;
 
+  @override
+  State<MealCard> createState() => _MealCardState();
+}
+
+class _MealCardState extends State<MealCard> {
   get affordabilityLabel {
-    return meal.affordability == Affordability.affordable
+    return widget.meal.affordability == Affordability.affordable
         ? "Affordable"
         : "Pricy";
   }
 
   get difficultyLabel {
-    switch (meal.complexity) {
+    switch (widget.meal.complexity) {
       case Complexity.easy:
         return "Easy";
       case Complexity.medium:
@@ -27,16 +39,31 @@ class MealCard extends StatelessWidget {
     }
   }
 
+  _setFavorite() {
+    setState(() {
+      widget.meal.isFavorite = !widget.meal.isFavorite;
+    });
+    if (widget.meal.isFavorite) {
+      ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text('Added ${widget.meal.title} in Favorites List'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () => _renderMealDetailScreen(context),
         child: Stack(
           children: [
             FadeInImage(
@@ -45,7 +72,7 @@ class MealCard extends StatelessWidget {
               width: double.infinity,
               placeholder: MemoryImage(kTransparentImage),
               image: NetworkImage(
-                meal.imageUrl,
+                widget.meal.imageUrl,
               ),
             ),
             Positioned(
@@ -64,7 +91,7 @@ class MealCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            meal.title,
+                            widget.meal.title,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -79,7 +106,7 @@ class MealCard extends StatelessWidget {
                             children: [
                               MealCardMetadata(
                                 icon: Icons.timelapse,
-                                label: '${meal.duration} min',
+                                label: '${widget.meal.duration} min',
                               ),
                               MealCardMetadata(
                                 icon: Icons.attach_money_rounded,
@@ -97,8 +124,35 @@ class MealCard extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            Positioned(
+              top: 4,
+              right: 4,
+              child: IconButton(
+                iconSize: 40,
+                onPressed: _setFavorite,
+                icon: Icon(
+                  widget.meal.isFavorite ? Icons.star : Icons.star_border,
+                  color: widget.meal.isFavorite
+                      ? Colors.amber.shade300
+                      : Colors.white,
+                  grade: 50,
+                ),
+              ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  _renderMealDetailScreen(BuildContext context) {
+    if (widget.shouldPreventNavigation) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (pageContext) => MealDetailScreen(
+          meal: widget.meal,
         ),
       ),
     );

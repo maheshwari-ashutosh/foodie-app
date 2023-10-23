@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodie/model/category.dart';
-import 'package:foodie/model/meal.dart';
 import 'package:foodie/screens/meals_screen.dart';
-import 'package:foodie/test-data/meals_test_data.dart';
+import 'package:foodie/utils/meals.dart';
 
 class CategoryCard extends StatelessWidget {
   const CategoryCard({super.key, required this.category});
@@ -10,37 +9,16 @@ class CategoryCard extends StatelessWidget {
   final Category category;
 
   void _selectCategory(BuildContext context) {
-    final mealList = meals
-        .where((element) => element["categories"].contains(category.title));
+    final mealList = getMealsList()
+        .where((element) => element.categories.contains(category.title))
+        .toList();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (screenContext) {
           return MealsScreen(
             title: category.title,
-            meals: [
-              for (final meal in mealList)
-                Meal(
-                  categories: meal["categories"],
-                  title: meal["title"],
-                  imageUrl: meal["imageUrl"],
-                  ingredients: meal["ingredients"],
-                  steps: meal["steps"],
-                  duration: meal["duration"],
-                  complexity: meal["complexity"] == 0
-                      ? Complexity.easy
-                      : meal["complexity"] == 1
-                          ? Complexity.medium
-                          : Complexity.difficult,
-                  affordability: meal["affordability"] == 0
-                      ? Affordability.affordable
-                      : Affordability.moderate,
-                  isGlutenFree: meal["isGlutenFree"],
-                  isLactoseFree: meal["isLactoseFree"],
-                  isVegan: meal["isVegan"],
-                  isVegetarian: meal["isVegetarian"],
-                ),
-            ],
+            meals: mealList,
           );
         },
       ),
