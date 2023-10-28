@@ -20,7 +20,10 @@ class MealDetailScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          MealCard(meal: meal, shouldPreventNavigation: true),
+          Hero(
+            tag: meal.id,
+            child: MealCard(meal: meal, shouldPreventNavigation: true),
+          ),
           const SizedBox(
             height: 16,
           ),

@@ -1,13 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodie/model/meal.dart';
 import 'package:foodie/screens/meal_detail_screen.dart';
-import 'package:foodie/test-data/meals_test_data.dart';
+import 'package:foodie/utils/meals.dart';
 import 'package:foodie/widgets/meal_card_metadata.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class MealCard extends StatefulWidget {
+class MealCard extends ConsumerStatefulWidget {
   const MealCard({
     super.key,
     required this.meal,
@@ -18,10 +19,10 @@ class MealCard extends StatefulWidget {
   final bool shouldPreventNavigation;
 
   @override
-  State<MealCard> createState() => _MealCardState();
+  ConsumerState<MealCard> createState() => _MealCardState();
 }
 
-class _MealCardState extends State<MealCard> {
+class _MealCardState extends ConsumerState<MealCard> {
   get affordabilityLabel {
     return widget.meal.affordability == Affordability.affordable
         ? "Affordable"
@@ -43,7 +44,9 @@ class _MealCardState extends State<MealCard> {
     setState(() {
       widget.meal.isFavorite = !widget.meal.isFavorite;
     });
+
     if (widget.meal.isFavorite) {
+      ref.read(mealsProvider.notifier).setFavorite(widget.meal);
       ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
         SnackBar(
@@ -51,6 +54,8 @@ class _MealCardState extends State<MealCard> {
           duration: const Duration(seconds: 3),
         ),
       );
+    } else {
+      ref.read(mealsProvider.notifier).removeFavorite(widget.meal);
     }
   }
 
@@ -139,7 +144,7 @@ class _MealCardState extends State<MealCard> {
                   grade: 50,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
